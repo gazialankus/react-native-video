@@ -1760,15 +1760,11 @@ didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     }
     NSString *drmType = (NSString *)[self->_drm objectForKey:@"type"];
     if ([drmType isEqualToString:@"fairplay"]) {
-      NSString *certificateStringUrl = (NSString *)[self->_drm objectForKey:@"certificateUrl"];
-      if (certificateStringUrl != nil) {
-        NSURL *certificateURL = [NSURL URLWithString:[certificateStringUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        NSString *certificate = (NSString *)[self->_drm objectForKey:@"certificate"];
+      if (certificate != nil) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-          NSData *certificateData = [NSData dataWithContentsOfURL:certificateURL];
-          if ([self->_drm objectForKey:@"base64Certificate"]) {
-            certificateData = [[NSData alloc] initWithBase64EncodedData:certificateData options:NSDataBase64DecodingIgnoreUnknownCharacters];
-          }
-          
+          NSData *certificateData = [[NSData alloc] initWithBase64EncodedString:certificate options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
           if (certificateData != nil) {
             NSData *contentIdData = [contentId dataUsingEncoding:NSUTF8StringEncoding];
             AVAssetResourceLoadingDataRequest *dataRequest = [loadingRequest dataRequest];
@@ -1781,13 +1777,14 @@ didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
                 [self finishLoadingWithError:spcError];
                 self->_requestingCertificateErrored = YES;
               }
+
               if (spcData != nil) {
                 if(self.onGetLicense) {
                   NSString *spcStr = [[NSString alloc] initWithData:spcData encoding:NSASCIIStringEncoding];
                   self->_requestingCertificate = YES;
                   self.onGetLicense(@{@"spc": spcStr,
                                       @"contentId": contentId,
-                                      @"spcBase64": [[[NSData alloc] initWithBase64EncodedData:certificateData options:NSDataBase64DecodingIgnoreUnknownCharacters] base64EncodedStringWithOptions:0],
+                                      @"spcBase64": [spcData base64EncodedStringWithOptions:0],
                                       @"target": self.reactTag});
                 } else if(licenseServer != nil) {
                   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
@@ -1802,8 +1799,8 @@ didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
                     }
                   }
                   //
-                  
-                  [request setHTTPBody: spcData];
+                  [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+                  [request setHTTPBody: [spcData base64EncodedDataWithOptions:0]];
                   NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
                   NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
                   NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
