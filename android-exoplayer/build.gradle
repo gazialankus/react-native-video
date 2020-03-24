@@ -4,6 +4,16 @@ def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
+repositories {
+		maven {
+			url "https://maven.drm.technology/artifactory/vudrm-widevine"
+			credentials {
+				username = vualto_username
+				password = vualto_password
+			}
+		}
+}
+
 android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
     buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
@@ -42,6 +52,10 @@ dependencies {
     }
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation project(':24i-nxg-sdk-media-offline')
+
+    // Vualto
+    implementation 'com.vualto.vudrm:widevine:0.3.4'
+    implementation 'com.vualto.vudrm:kidplugin:0.3.4'
 
     // MediaSession extension
     implementation 'com.google.android.exoplayer:extension-mediasession:2.8.1'
