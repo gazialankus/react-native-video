@@ -91,6 +91,9 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.twentyfouri.media.offline.ExoPlayerDownloadService;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.vualto.vudrm.widevine.AssetConfiguration;
+import com.vualto.vudrm.widevine.WidevineCallback;
+import com.vualto.vudrm.widevine.vudrm;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -179,6 +182,7 @@ class ReactExoplayerView extends FrameLayout implements
     private boolean mReportBandwidth = false;
     private UUID drmUUID = null;
     private String drmLicenseUrl = null;
+    private String vualtoToken = null;
     private String[] drmLicenseHeader = null;
     private boolean controls;
     private boolean showPictureInPictureOnLeave;
@@ -456,7 +460,7 @@ class ReactExoplayerView extends FrameLayout implements
                     if (self.drmUUID != null) {
                         try {
                             drmSessionManager = buildDrmSessionManager(self.drmUUID, self.drmLicenseUrl,
-                                    self.drmLicenseHeader);
+                            self.drmLicenseHeader, self.vualtoToken);
                         } catch (UnsupportedDrmException e) {
                             int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
                                     : (e.reason == UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME
@@ -520,20 +524,40 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     private DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(UUID uuid,
-                                                                           String licenseUrl, String[] keyRequestPropertiesArray) throws UnsupportedDrmException {
+                                                                           String licenseUrl, String[] keyRequestPropertiesArray, String vualtoToken) throws UnsupportedDrmException {
         if (Util.SDK_INT < 18) {
             return null;
         }
-        HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl,
+
+        if (vualtoToken != null) {
+            AssetConfiguration assetConfiguration = new AssetConfiguration.Builder()
+                .tokenWith(vualtoToken).build();
+
+            WidevineCallback callback = new WidevineCallback(assetConfiguration);
+            return new DefaultDrmSessionManager<>(vudrm.widevineDRMSchemeUUID,
+                FrameworkMediaDrm.newInstance(vudrm.widevineDRMSchemeUUID),
+                callback,
+                null,
+                false,
+                null);
+
+        } else {
+            HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl,
                 buildHttpDataSourceFactory(false));
-        if (keyRequestPropertiesArray != null) {
-            for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
-                drmCallback.setKeyRequestProperty(keyRequestPropertiesArray[i],
+            if (keyRequestPropertiesArray != null) {
+                for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
+                    drmCallback.setKeyRequestProperty(keyRequestPropertiesArray[i],
                         keyRequestPropertiesArray[i + 1]);
+                }
             }
+
+            return new DefaultDrmSessionManager<>(uuid,
+                FrameworkMediaDrm.newInstance(uuid),
+                drmCallback,
+                null,
+                false,
+                3);
         }
-        return new DefaultDrmSessionManager<>(uuid,
-                FrameworkMediaDrm.newInstance(uuid), drmCallback, null, false, 3);
     }
 
     private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
@@ -1381,6 +1405,10 @@ class ReactExoplayerView extends FrameLayout implements
 
     public void setDrmType(UUID drmType) {
         this.drmUUID = drmType;
+    }
+
+    public void setVualtoToken(String token) {
+        this.vualtoToken = token;
     }
 
     public void setDrmLicenseUrl(String licenseUrl){
