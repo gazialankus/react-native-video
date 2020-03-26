@@ -94,10 +94,14 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.vualto.vudrm.widevine.AssetConfiguration;
 import com.vualto.vudrm.widevine.WidevineCallback;
 import com.vualto.vudrm.widevine.vudrm;
+import com.vualto.vudrm.HttpKidSource;
 
+import java.io.InvalidObjectException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
@@ -182,8 +186,8 @@ class ReactExoplayerView extends FrameLayout implements
     private boolean mReportBandwidth = false;
     private UUID drmUUID = null;
     private String drmLicenseUrl = null;
-    private String vualtoToken = null;
     private String[] drmLicenseHeader = null;
+    private String vualtoToken = null;
     private boolean controls;
     private boolean showPictureInPictureOnLeave;
     private boolean offline;
@@ -460,13 +464,15 @@ class ReactExoplayerView extends FrameLayout implements
                     if (self.drmUUID != null) {
                         try {
                             drmSessionManager = buildDrmSessionManager(self.drmUUID, self.drmLicenseUrl,
-                            self.drmLicenseHeader, self.vualtoToken);
+                                    self.drmLicenseHeader, self.vualtoToken, self.srcUri);
                         } catch (UnsupportedDrmException e) {
                             int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
                                     : (e.reason == UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME
                                     ? R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown);
                             eventEmitter.error(getResources().getString(errorStringId), e);
                             return;
+                        } catch (Exception e){
+                            eventEmitter.error("",e);
                         }
                     }
                     // End DRM
@@ -524,14 +530,15 @@ class ReactExoplayerView extends FrameLayout implements
     }
 
     private DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(UUID uuid,
-                                                                           String licenseUrl, String[] keyRequestPropertiesArray, String vualtoToken) throws UnsupportedDrmException {
+                                                                           String licenseUrl, String[] keyRequestPropertiesArray, String vualtoToken, Uri srcUri) throws UnsupportedDrmException, MalformedURLException, InvalidObjectException {
         if (Util.SDK_INT < 18) {
             return null;
         }
-
         if (vualtoToken != null) {
             AssetConfiguration assetConfiguration = new AssetConfiguration.Builder()
-                .tokenWith(vualtoToken).build();
+                .tokenWith(vualtoToken)
+                .kidProviderWith(new HttpKidSource(new URL(srcUri.toString())))
+                .build();
 
             WidevineCallback callback = new WidevineCallback(assetConfiguration);
             return new DefaultDrmSessionManager<>(vudrm.widevineDRMSchemeUUID,
@@ -539,7 +546,7 @@ class ReactExoplayerView extends FrameLayout implements
                 callback,
                 null,
                 false,
-                null);
+                0);
 
         } else {
             HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl,
@@ -1509,7 +1516,7 @@ class ReactExoplayerView extends FrameLayout implements
     public void setSubtitleForcedMiddle(final boolean forced) {
         if (exoPlayerView != null) {
             exoPlayerView.setSubtitleForcedMiddle(forced);
-        }        
+        }
     }
 
     public void save(ReadableMap options, Promise promise) {
