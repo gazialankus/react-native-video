@@ -29,11 +29,9 @@ android {
 
     productFlavors {
         vanila {
-            flavorDimension "default"
 
         }
         vualto {
-            flavorDimension "default"
             repositories {
             maven {
                 url 'https://maven.drm.technology/artifactory/vudrm-widevine'
@@ -72,7 +70,7 @@ dependencies {
 
     // Vualto
     vualtoImplementation 'com.vualto.vudrm:widevine:0.3.4'
-    vualtoIimplementation 'com.vualto.vudrm:kidplugin:0.3.4'
+    vualtoImplementation 'com.vualto.vudrm:kidplugin:0.3.4'
 
     // MediaSession extension
     implementation 'com.google.android.exoplayer:extension-mediasession:2.8.1'
