@@ -8,6 +8,8 @@ android {
     compileSdkVersion safeExtGet('compileSdkVersion', 28)
     buildToolsVersion safeExtGet('buildToolsVersion', '28.0.3')
 
+    flavorDimensions "default"
+
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -23,6 +25,29 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    productFlavors {
+        vanila {
+
+        }
+        vualto {
+            repositories {
+            maven {
+                url 'https://maven.drm.technology/artifactory/vudrm-widevine'
+                credentials {
+                    username = vualto_username
+                    password = vualto_password
+                }
+            }
+            maven { url 'https://maven.drm.technology/artifactory/kid-plugin'
+                credentials {
+                    username = vualto_username
+                    password = vualto_password
+                }
+            }
+            }
+        }
     }
 }
 
@@ -44,8 +69,8 @@ dependencies {
     implementation project(':24i-nxg-sdk-media-offline')
 
     // Vualto
-    implementation 'com.vualto.vudrm:widevine:0.3.4'
-    implementation 'com.vualto.vudrm:kidplugin:0.3.4'
+    vualtoImplementation 'com.vualto.vudrm:widevine:0.3.4'
+    vualtoIimplementation 'com.vualto.vudrm:kidplugin:0.3.4'
 
     // MediaSession extension
     implementation 'com.google.android.exoplayer:extension-mediasession:2.8.1'

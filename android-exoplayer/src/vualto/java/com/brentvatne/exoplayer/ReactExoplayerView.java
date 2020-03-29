@@ -1,6 +1,10 @@
 package com.brentvatne.exoplayer;
 
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.vualto.vudrm.widevine.AssetConfiguration;
+import com.vualto.vudrm.widevine.WidevineCallback;
+import com.vualto.vudrm.widevine.vudrm;
+import com.vualto.vudrm.HttpKidSource;
 
 
 @SuppressLint("ViewConstructor")
@@ -13,6 +17,21 @@ class ReactExoplayerView extends ReactExoplayerViewBase {
         if (Util.SDK_INT < 18) {
             return null;
         }
+        if (vualtoToken != null) {
+            AssetConfiguration assetConfiguration = new AssetConfiguration.Builder()
+                    .tokenWith(vualtoToken)
+                    .kidProviderWith(new HttpKidSource(new URL(srcUri.toString())))
+                    .build();
+
+            WidevineCallback callback = new WidevineCallback(assetConfiguration);
+            return new DefaultDrmSessionManager<>(vudrm.widevineDRMSchemeUUID,
+                    FrameworkMediaDrm.newInstance(vudrm.widevineDRMSchemeUUID),
+                    callback,
+                    null,
+                    false,
+                    0);
+
+        } else {
             HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl,
                     buildHttpDataSourceFactory(false));
             if (keyRequestPropertiesArray != null) {
@@ -28,5 +47,6 @@ class ReactExoplayerView extends ReactExoplayerViewBase {
                     null,
                     false,
                     3);
+        }
     }
 }
