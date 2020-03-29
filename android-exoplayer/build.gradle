@@ -29,9 +29,11 @@ android {
 
     productFlavors {
         vanila {
+            flavorDimension "default"
 
         }
         vualto {
+            flavorDimension "default"
             repositories {
             maven {
                 url 'https://maven.drm.technology/artifactory/vudrm-widevine'
