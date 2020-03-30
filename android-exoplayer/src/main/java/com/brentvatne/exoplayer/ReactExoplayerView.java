@@ -1,7 +1,24 @@
 package com.brentvatne.exoplayer;
 
 
+import android.net.Uri;
+
+import com.facebook.react.uimanager.ThemedReactContext;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
+import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
+import com.google.android.exoplayer2.util.Util;
+
+import java.util.UUID;
+
 class ReactExoplayerView extends ReactExoplayerViewBase {
+
+    public ReactExoplayerView(ThemedReactContext context) {
+        super(context);
+    }
 
     @Override
     protected DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(
@@ -10,9 +27,7 @@ class ReactExoplayerView extends ReactExoplayerViewBase {
                 String[] keyRequestPropertiesArray,
                 String vualtoToken,
                 Uri srcUri)
-            throws UnsupportedDrmException,
-                MalformedURLException,
-                InvalidObjectException {
+            throws UnsupportedDrmException {
 
         if (Util.SDK_INT < 18) {
             return null;

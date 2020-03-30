@@ -109,7 +109,7 @@ import java.util.UUID;
 
 @SuppressLint("ViewConstructor")
 @SuppressWarnings("unchecked")
-class ReactExoplayerView extends FrameLayout implements
+class ReactExoplayerViewBase extends FrameLayout implements
         LifecycleEventListener,
         Player.EventListener,
         BandwidthMeter.EventListener,
@@ -226,7 +226,7 @@ class ReactExoplayerView extends FrameLayout implements
         }
     };
 
-    public ReactExoplayerView(ThemedReactContext context) {
+    public ReactExoplayerViewBase(ThemedReactContext context) {
         super(context);
         this.themedReactContext = context;
         this.eventEmitter = new VideoEventEmitter(context);
@@ -237,7 +237,7 @@ class ReactExoplayerView extends FrameLayout implements
         themedReactContext.addLifecycleEventListener(this);
         audioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver(themedReactContext);
 
-        ReactExoplayerView self = this;
+        ReactExoplayerViewBase self = this;
 
         pipReceiver = new BroadcastReceiver() {
             @Override
@@ -438,7 +438,7 @@ class ReactExoplayerView extends FrameLayout implements
 
 
     private void initializePlayer() {
-        ReactExoplayerView self = this;
+        ReactExoplayerViewBase self = this;
         // This ensures all props have been settled, to avoid async racing conditions.
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -737,7 +737,7 @@ class ReactExoplayerView extends FrameLayout implements
      *     DataSource factory.
      * @return A new HttpDataSource factory.
      */
-    private HttpDataSource.Factory buildHttpDataSourceFactory(boolean useBandwidthMeter) {
+    protected HttpDataSource.Factory buildHttpDataSourceFactory(boolean useBandwidthMeter) {
         return DataSourceUtil.getDefaultHttpDataSourceFactory(this.themedReactContext, useBandwidthMeter ? BANDWIDTH_METER : null, requestHeaders);
     }
 
