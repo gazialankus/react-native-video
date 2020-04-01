@@ -91,10 +91,6 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.twentyfouri.media.offline.ExoPlayerDownloadService;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.vualto.vudrm.widevine.AssetConfiguration;
-import com.vualto.vudrm.widevine.WidevineCallback;
-import com.vualto.vudrm.widevine.vudrm;
-import com.vualto.vudrm.HttpKidSource;
 
 import java.io.InvalidObjectException;
 import java.net.CookieHandler;
