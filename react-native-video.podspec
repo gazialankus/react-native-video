@@ -1,3 +1,6 @@
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://bitbucket.org/vualtomobile/vudrmfairplay-pods.git'
+
 require "json"
 
 package = JSON.parse(File.read(File.join(__dir__, "package.json")))
@@ -30,6 +33,7 @@ Pod::Spec.new do |s|
   end
 
   s.dependency "React"
+  s.dependency "vudrmFairPlay"
 
   s.default_subspec = "Video"
 
