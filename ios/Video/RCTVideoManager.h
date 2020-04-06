@@ -1,5 +1,6 @@
-#import "RCTVideoManagerBase.h"
+#import <React/RCTViewManager.h>
+#import <React/RCTBridgeModule.h>
 
-@interface RCTVideoManager : RCTVideoManagerBase
+@interface RCTVideoManagerBase : RCTViewManager <RCTBridgeModule>
 
 @end
