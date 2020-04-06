@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.homepage       = 'https://github.com/brentvatne/react-native-video'
   s.source       = { :git => "https://github.com/brentvatne/react-native-video.git", :tag => "#{s.version}" }
 
-  s.ios.deployment_target = "8.0"
+  s.ios.deployment_target = "9.0"
   s.tvos.deployment_target = "9.0"
 
   s.subspec "Video" do |ss|
