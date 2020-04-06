@@ -7,9 +7,6 @@
 
 - (void)playerItemForSource:(NSDictionary *)source withCallback:(void(^)(AVPlayerItem *))handler
 {
-    NSLog(@"hello from the other side");
-    
-//    [super playerItemForSource:source withCallback:handler];
     if (self->_drm != nil) {
         NSString *vualtoToken = (NSString *)[self->_drm objectForKey:@"vualtoToken"];
         NSString *contentdId = (NSString *)[self->_drm objectForKey:@"contentdId"];
@@ -23,7 +20,7 @@
             return;
         }
     }
-    
+    [super playerItemForSource:source withCallback:handler];    
 }
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher
