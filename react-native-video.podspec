@@ -37,8 +37,5 @@ Pod::Spec.new do |s|
   s.xcconfig = {
     'OTHER_LDFLAGS': '-ObjC',
   }
-  s.pod_target_xcconfig = {
-    # this could theoretically apply to any `s.dependency` as well
-    'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES'
-  }
+  # add things here
 end
