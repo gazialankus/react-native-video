@@ -5,8 +5,9 @@
 #import <React/RCTUIManager.h>
 #import <AVFoundation/AVFoundation.h>
 
-@implementation RCTVideoManagerBase
+@implementation RCTVideoManager
 
+RCT_EXPORT_MODULE();
 
 - (UIView *)view
 {
