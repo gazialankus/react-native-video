@@ -1,22 +1,26 @@
 #import "RCTVideo.h"
 #import <react_native_video/react_native_video-Swift.h>
 
+
 @implementation RCTVideo {
-    NSDictionary *_drm;
+    NSDictionary* _drm;
+}
+
+- (void)setDrm:(NSDictionary *)drm {
+  _drm = drm;
 }
 
 - (void)playerItemForSource:(NSDictionary *)source withCallback:(void(^)(AVPlayerItem *))handler
 {
-    if (self->_drm != nil) {
-        NSString *vualtoToken = (NSString *)[self->_drm objectForKey:@"vualtoToken"];
-        NSString *contentdId = (NSString *)[self->_drm objectForKey:@"contentdId"];
+    NSDictionary *drm = self->_drm;
+    if (drm != nil) {
+        NSString *vualtoToken = (NSString *)[drm objectForKey:@"vualtoToken"];
+        NSString *contentdId = (NSString *)[drm objectForKey:@"contentdId"];
         if (vualtoToken != nil) {
             NSString *uri = [source objectForKey:@"uri"];
             VualtoManager *vualtoManager = [[VualtoManager alloc] init];
             AVPlayerItem *pi = [vualtoManager getVualtoPlayerItemWithAssetURL:uri token:vualtoToken contentID:contentdId];
-            [super playerItemForSource:source withCallback:^(AVPlayerItem * playerItem) {
-                handler(pi);
-            }];
+            handler(pi);
             return;
         }
     }
