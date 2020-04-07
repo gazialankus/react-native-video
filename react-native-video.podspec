@@ -30,7 +30,6 @@ Pod::Spec.new do |s|
   end
 
   s.dependency "React"
-  s.dependency "vudrmFairPlay"
 
   s.default_subspec = "Video"
 
