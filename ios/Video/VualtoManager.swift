@@ -12,6 +12,8 @@ import vudrmFairPlay
 
 @objc public final class VualtoManager: NSObject {
     
+    var drm: vudrmFairPlay?
+    
     @objc public override init() {
         super.init()
     }
@@ -23,6 +25,7 @@ import vudrmFairPlay
                 let drm = vudrmFairPlay(url: assetNSURL, token: token, contentID: contentID) else {
             return nil
         }
+        self.drm = drm
 
         let playerItem = AVPlayerItem(asset: drm.asset)
         return AVPlayer(playerItem: playerItem)
@@ -35,7 +38,7 @@ import vudrmFairPlay
                 let drm = vudrmFairPlay(url: assetNSURL, token: token, contentID: contentID) else {
             return nil
         }
-
+        self.drm = drm
         let playerItem = AVPlayerItem(asset: drm.asset)
         return playerItem
     }
