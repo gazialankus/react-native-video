@@ -15,7 +15,7 @@
     NSDictionary *drm = self->_drm;
     if (drm != nil) {
         NSString *vualtoToken = (NSString *)[drm objectForKey:@"vualtoToken"];
-        NSString *contentdId = (NSString *)[drm objectForKey:@"contentdId"];
+        NSString *contentdId = (NSString *)[drm objectForKey:@"contentId"];
         if (vualtoToken != nil) {
             NSString *uri = [source objectForKey:@"uri"];
             VualtoManager *vualtoManager = [[VualtoManager alloc] init];
