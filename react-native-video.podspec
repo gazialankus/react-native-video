@@ -12,11 +12,11 @@ Pod::Spec.new do |s|
   s.homepage       = 'https://github.com/brentvatne/react-native-video'
   s.source       = { :git => "https://github.com/brentvatne/react-native-video.git", :tag => "#{s.version}" }
 
-  s.ios.deployment_target = "8.0"
+  s.ios.deployment_target = "9.0"
   s.tvos.deployment_target = "9.0"
 
   s.subspec "Video" do |ss|
-    ss.source_files  = "ios/Video/*.{h,m}"
+    ss.source_files  = "ios/Video/*.{h,m,swift}"
     s.static_framework = true
   end
 
@@ -36,4 +36,5 @@ Pod::Spec.new do |s|
   s.xcconfig = {
     'OTHER_LDFLAGS': '-ObjC',
   }
+  # add things here
 end
