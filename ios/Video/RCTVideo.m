@@ -761,6 +761,8 @@ static int const RCTVideoUnset = -1;
                 self.onVideoFullscreenPlayerDidPresent(@{@"target": self.reactTag});
               }
             }
+            [self.reactViewController.view setFrame:[UIScreen mainScreen].bounds];
+            [self.reactViewController.view setNeedsLayout];
           } else {
             bool shouldFire = _fullscreenPlayerPresented;
 
@@ -778,10 +780,7 @@ static int const RCTVideoUnset = -1;
                 self.onVideoFullscreenPlayerDidDismiss(@{@"target": self.reactTag});
               }
             }
-
-            [self.reactViewController.view setFrame:[UIScreen mainScreen].bounds];
-            [self.reactViewController.view setNeedsLayout];
-          } else NSLog(@"not fullscreen");
+          }
         }
 
         return;
